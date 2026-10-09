@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Etalase Museum</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Menghilangkan scrollbar pada level window/body */
+            background-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .gallery-container {
+            max-width: 400px;
+            max-height: 100vh;
+            /* Membatasi tinggi maksimum sesuai tinggi tampilan iframe */
+            box-sizing: border-box;
+            margin: auto;
+            text-align: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            /* Hanya mengizinkan SATU scrollbar di dalam kartu jika teks sangat panjang */
+        }
+
+        .slide-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Container khusus gambar biar tombol bisa nempel di kiri-kanannya */
+        .image-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            max-width: 356px;
+            border-radius: 8px;
+            object-fit: cover;
+            /* Tambahan transisi biar pergantian gambar lebih smooth */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Desain tombol navigasi */
+        .btn-nav {
+            position: absolute;
+            background-color: rgba(211, 84, 0, 0.85);
+            /* Sedikit transparan */
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 10;
+            /* Biar tombol selalu ada di atas gambar */
+        }
+
+        .btn-nav:hover {
+            background-color: rgba(160, 64, 0, 1);
+        }
+
+        /* Set posisi tombol tepat di kiri dan kanan gambar */
+        .prev {
+            left: 5px;
+        }
+
+        .next {
+            right: 5px;
+        }
+
+        .slide-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 15px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="gallery-container">
+        <!-- Judul akan berubah otomatis -->
+        <div class="slide-title" id="judul-hewan">Memuat...</div>
+
+        <div class="image-wrapper">
+            <!-- Tombol Before / Prev -->
+            <button class="btn-nav prev" id="btn-prev" onclick="gantiSlide(-1)">&#10094;</button>
+
+            <!-- Gambar utama -->
+            <img id="gambar-hewan" src="" alt="Koleksi Museum">
+
+            <!-- Tombol Next -->
+            <button class="btn-nav next" id="btn-next" onclick="gantiSlide(1)">&#10095;</button>
+        </div>
+
+        <!-- Keterangan akan berubah otomatis -->
+        <div class="slide-desc" id="keterangan-hewan">Memuat keterangan...</div>
+    </div>
+
+    <script>
+        // 1. Tempat lu masukin Judul, Link Gambar, dan Keterangan
+        // Cukup edit teks di dalam tanda kutip ini aja ya
+        const koleksiData = [
+            {
+                judul: "Tenggiling",
+                gambar: "tenggiling.jpg",
+                keterangan: "Tenggiling adalah mamalia bersisik yang banyak ditemukan di kawasan hutan Kalimantan. Hewan ini memiliki sisik keras yang berfungsi melindungi tubuhnya dari serangan predator. Makanan utamanya adalah semut dan rayap yang diambil menggunakan lidahnya yang panjang dan lengket. Tenggiling merupakan satwa yang aktif pada malam hari (nokturnal) dan saat ini termasuk satwa yang dilindungi karena populasinya terus menurun akibat perburuan liar dan perdagangan ilegal."
+            },
+            {
+                judul: "Orang Utan",
+                gambar: "orang_utan.jpg",
+                keterangan: "Orangutan Kalimantan merupakan salah satu primata terbesar di dunia dan menjadi satwa endemik Pulau Kalimantan. Hewan ini hidup di hutan hujan tropis dan menghabiskan sebagian besar waktunya di atas pohon. Orangutan memakan buah-buahan, daun, bunga, dan serangga. Satwa ini memiliki peran penting dalam menjaga keseimbangan ekosistem karena membantu menyebarkan biji-bijian berbagai tumbuhan di hutan. Orangutan termasuk satwa yang dilindungi karena habitatnya semakin berkurang akibat pembukaan hutan."
+            },
+            {
+                judul: "Kucing Hutan",
+                gambar: "kucing_hutan.jpg",
+                keterangan: "Kucing hutan adalah salah satu kucing liar yang hidup di kawasan hutan Kalimantan. Tubuhnya lebih kecil dibandingkan macan tutul, dengan bulu bercorak totol yang membantu menyamarkan diri di lingkungan hutan. Hewan ini merupakan pemburu yang aktif pada malam hari dan memangsa tikus, burung, reptil, serta hewan kecil lainnya. Keberadaan kucing hutan sangat penting untuk menjaga keseimbangan populasi satwa di alam."
+            },
+            {
+                judul: "Penyu",
+                gambar: "penyu.jpg",
+                keterangan: "Penyu adalah reptil laut yang banyak ditemukan di perairan Indonesia, termasuk wilayah pesisir Kalimantan Barat. Penyu menghabiskan sebagian besar hidupnya di laut, tetapi akan kembali ke pantai untuk bertelur. Hewan ini berperan penting dalam menjaga kesehatan ekosistem laut, seperti padang lamun dan terumbu karang. Saat ini berbagai jenis penyu telah dilindungi karena populasinya terancam oleh pencemaran laut, perburuan telur, dan kerusakan habitat."
+            },
+            {
+                judul: "Biawak",
+                gambar: "biawak.jpg",
+                keterangan: "Biawak merupakan salah satu reptil yang banyak ditemukan di hutan, rawa, sungai, dan daerah pesisir Kalimantan. Salah satu jenis yang paling umum adalah biawak air (Varanus salvator). Hewan ini memiliki tubuh yang besar, kaki yang kuat, ekor panjang, serta lidah bercabang yang digunakan untuk mendeteksi bau mangsa."
+            },
+            {
+                judul: "Ular",
+                gambar: "ular.jpg",
+                keterangan: "Ular merupakan salah satu reptil yang banyak hidup di hutan, rawa, maupun sungai di Kalimantan. Terdapat berbagai jenis ular, baik yang berbisa maupun tidak berbisa. Ular memiliki peran penting sebagai predator yang membantu mengendalikan populasi tikus dan hewan kecil lainnya sehingga menjaga keseimbangan ekosistem. Sebagian besar ular akan menghindari manusia dan hanya menyerang jika merasa terancam."
+            }
+        ];
+
+        let indexSekarang = 0;
+
+        // Ambil elemen HTML yang akan dimanipulasi
+        const elemenJudul = document.getElementById('judul-hewan');
+        const elemenGambar = document.getElementById('gambar-hewan');
+        const elemenKeterangan = document.getElementById('keterangan-hewan');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function updateTampilan() {
+            // Ganti konten sesuai data array
+            elemenJudul.innerText = koleksiData[indexSekarang].judul;
+            elemenGambar.src = koleksiData[indexSekarang].gambar;
+            elemenKeterangan.innerText = koleksiData[indexSekarang].keterangan;
+
+            // Logika sesuai revisi dosen:
+            // Sembunyikan tombol Prev jika sedang di gambar urutan pertama (index 0)
+            if (indexSekarang === 0) {
+                btnPrev.style.display = 'none';
+            } else {
+                btnPrev.style.display = 'flex';
+            }
+
+            // Sembunyikan tombol Next jika sedang di gambar urutan terakhir
+            if (indexSekarang === koleksiData.length - 1) {
+                btnNext.style.display = 'none';
+            } else {
+                btnNext.style.display = 'flex';
+            }
+        }
+
+        function gantiSlide(arah) {
+            indexSekarang += arah;
+            updateTampilan();
+        }
+
+        // Jalankan fungsi saat web pertama kali dirender
+        updateTampilan();
+    </script>
+
+</body>
+
+</html>
