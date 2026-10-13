@@ -6,31 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri Etalase Museum</title>
     <style>
+        /* Paksa window iframe agar tidak memunculkan scrollbar internal */
         html,
         body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            /* Menghilangkan scrollbar pada level window/body */
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: hidden !important;
+            /* Mematikan scrollbar internal iframe */
             background-color: transparent;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .gallery-container {
-            max-width: 400px;
-            max-height: 100vh;
-            /* Membatasi tinggi maksimum sesuai tinggi tampilan iframe */
-            box-sizing: border-box;
-            margin: auto;
+            max-width: 100%;
+            margin: 0 auto;
             text-align: center;
             background: #fff;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            /* Hanya mengizinkan SATU scrollbar di dalam kartu jika teks sangat panjang */
+            box-sizing: border-box;
+            overflow: visible !important;
+            /* Biarkan konten mengalir alami tanpa scroll tersendiri */
         }
 
         .slide-title {
@@ -40,7 +39,6 @@
             font-weight: bold;
         }
 
-        /* Container khusus gambar biar tombol bisa nempel di kiri-kanannya */
         .image-wrapper {
             position: relative;
             display: flex;
@@ -53,15 +51,12 @@
             max-width: 356px;
             border-radius: 8px;
             object-fit: cover;
-            /* Tambahan transisi biar pergantian gambar lebih smooth */
             transition: opacity 0.3s ease-in-out;
         }
 
-        /* Desain tombol navigasi */
         .btn-nav {
             position: absolute;
             background-color: rgba(211, 84, 0, 0.85);
-            /* Sedikit transparan */
             color: white;
             border: none;
             width: 35px;
@@ -75,14 +70,12 @@
             justify-content: center;
             transition: background-color 0.3s;
             z-index: 10;
-            /* Biar tombol selalu ada di atas gambar */
         }
 
         .btn-nav:hover {
             background-color: rgba(160, 64, 0, 1);
         }
 
-        /* Set posisi tombol tepat di kiri dan kanan gambar */
         .prev {
             left: 5px;
         }
